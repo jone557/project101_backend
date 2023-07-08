@@ -1,5 +1,4 @@
 const db = require("../models");
-const BaseService = require("../core/base.service");
 const { ObjectId } = require("mongodb");
 const Event = db.Event;
 
@@ -11,6 +10,7 @@ exports.addEvent = (req, res) => {
       location: req.body.location,
       date: req.body.date,
       image: req.body.image,
+      category: req.body.category
     });
     event.save((err, Event) => {
       if (err) {
@@ -96,16 +96,7 @@ exports.getSingleEvent = (req, res) => {
 
 exports.getEventList = async(req, res) => {
   let query = [];
-  let { page, size } = req.query;
-  if (!page) page = 1;
-  if (!size) size = 10;
-  const limit = parseInt(size);
-  const skip = BaseService.getSkipValue(limit, page);
-  
   query.push({ "$sort": { "order": -1 } });
-  query.push({ "$skip": skip });
-  query.push({ "$limit": limit });
-  
   try {
     const items = await Event.aggregate(query).exec();
     const count = await Event.countDocuments();

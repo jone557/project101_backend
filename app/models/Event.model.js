@@ -18,6 +18,7 @@ const Event = mongoose.model(
         required:true
            },
       image: String,
+      category: String,
     },
     {
       timestamps: true,

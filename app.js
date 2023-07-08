@@ -4,7 +4,9 @@ const bodyParser = require("body-parser");
 const db = require("./app/models");
 require("dotenv").config();
 const session = require("express-session");
+const cors = require('cors');
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(

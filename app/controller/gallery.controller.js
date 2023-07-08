@@ -17,7 +17,7 @@ exports.addgallery = (req, res) => {
         return;
         }
   
-    res.send({ message: "Images are saved successfully!" });
+    res.send({ message: savedImages});
       });
     } catch (error) {
       res.send({ message: error.message});
@@ -82,9 +82,13 @@ exports.deleteGalleryImage = (req, res) => {
     query.push({ "$limit": limit })
     try {
         const items = await Gallery.aggregate(query);
+        const totalCount = await Gallery.countDocuments();
+        const totalPages = Math.ceil(totalCount / limit);
         return res.status(200).send({
             items,
-            total: items.length
+            total: totalCount,
+            totalPages
+   
         }); 
     } catch (error) {
         return res.status(500).send({message :error.message})

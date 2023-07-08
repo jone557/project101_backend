@@ -1,5 +1,4 @@
 const db = require("../models");
-const BaseService = require("../core/base.service");
 const { ObjectId } = require("mongodb");
 const Notice = db.Notice;
 
@@ -94,15 +93,7 @@ exports.getSingleNotice = (req, res) => {
 
 exports.getNoticeList = async(req, res) => {
   let query = []
-  let { page, size } = req.query
-  if (!page) page = 1;
-  if (!size) size = 10;
-  const limit = parseInt(size)
-  const skip = BaseService.getSkipValue(limit, page)
-  
   query.push({ "$sort": { "order": -1 } })
-  query.push({ "$skip": skip })
-  query.push({ "$limit": limit })
   try {
       const items = await Notice.aggregate(query);
       return res.status(200).send({
