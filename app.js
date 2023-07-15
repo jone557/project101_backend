@@ -22,6 +22,8 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/event.routes")(app);
 require("./app/routes/notice.routes")(app);
 require("./app/routes/gallery.routes")(app);
+require("./app/routes/books.routes")(app);
+require("./app/routes/article.routes")(app);
 
 db.mongoose
   .connect(`${process.env.DB_URL_DEVELOPEMENT}`, {

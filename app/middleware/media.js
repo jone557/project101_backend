@@ -3,13 +3,14 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const { S3Client } = require('@aws-sdk/client-s3')
 const s3Client = new S3Client({
-    region: process.env.S3_ORIGIN,
+    region: process.env.AWS_REGION,
     credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY,
-        secretAccessKey: process.env.S3_ACCESS_SECRET,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     }
 })
-const fileFilter = (req, file, cb) => {
+
+const imageFilter = (req, file, cb) => {
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
         cb(null, true);
     } else {
@@ -18,7 +19,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const imageUpload = multer({
-    fileFilter,
+    imageFilter,
     storage: multerS3({
         acl: process.env.S3_PERMISSION,
         s3: s3Client,
@@ -36,23 +37,48 @@ const imageUpload = multer({
         }
     }),
 });
+const fileFilter = (req, file, cb) => {
+    if (
+      file.mimetype === 'application/pdf' ||
+      file.mimetype ===
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          'Invalid file type, only PDF and Word document files are allowed!'
+        ),
+        false
+      );
+    }
+  };
 
-// const imageDelete = s3Client.deleteObject({ Bucket: process.env.S3_BUCKET,
-//      Key:   function(req, file,cb){
-//         cb(null, file.key )
-//     }}, 
-//      (err, data) => {
-//     if (err) {
-//       console.error('Error deleting image:', err);
-     
-//     } else {
-//       console.log('Image deleted successfully');
-    
-//     }
-//   });
+  const documentUpload = multer({
+    fileFilter,
+    storage: multerS3({
+      acl: process.env.S3_PERMISSION,
+      s3: s3Client,
+      bucket: function (req, file, cb) {
+        cb(null, process.env.S3_BUCKET);
+      },
+      metadata: function (req, file, cb) {
+        cb(null, { fieldName: 'TESTING_METADATA' });
+      },
+      key: function (req, file, cb) {
+        var ext = file.originalname.split('.').pop();
+        var uniqueV = `document-${Date.now()}`;
+        const filename = `books/${uniqueV}.${ext}`;
+        cb(null, filename);
+      },
+    }),
+  });
+
+
 
 
 const mediaUpload = {
     imageUpload,
+    documentUpload,
 };
 module.exports = mediaUpload;
