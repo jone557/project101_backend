@@ -10,7 +10,8 @@ exports.addEvent = (req, res) => {
       location: req.body.location,
       date: req.body.date,
       image: req.body.image,
-      category: req.body.category
+      category: req.body.category,
+      videoUrl: req.body.videoUrl
     });
     event.save((err, Event) => {
       if (err) {

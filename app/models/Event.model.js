@@ -19,6 +19,7 @@ const Event = mongoose.model(
            },
       image: String,
       category: String,
+      videoUrl: String
     },
     {
       timestamps: true,
