@@ -7,34 +7,22 @@ module.exports = function (app) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
   });
-  app.post("/api/add-event", [authJwt.verifyToken], function (req, res, next) {
+  app.post("/api/image-upload", [authJwt.verifyToken], function (req, res, next) {
     if (req.headers['content-type']?.startsWith('multipart/form-data')) {
       singleImageUpload(req, res, function (err, some) {
         if (err) {
           return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
         }
-        req.body.image = req.file.location;
-        next();
+        const url = req.file?.location;
+        return res.status(200).send(url);
       });
     } else {
-      next();
+     return res.status(401).send("no Image value detected")
     }
-  }, controller.addEvent);
+  },)
+  app.post("/api/add-event", [authJwt.verifyToken], controller.addEvent);
   app.get("/api/event/:id", controller.getSingleEvent);
   app.get("/api/event", controller.getEventList);
-  app.put("/api/event/update/:id", [authJwt.verifyToken],
-  function (req, res, next) {
-    if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-      singleImageUpload(req, res, function (err, some) {
-        if (err) {
-          return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
-        }
-        req.body.image = req.file.location;
-        next();
-      });
-    } else {
-      next();
-    }
-  }, controller.updateEvent);
+  app.put("/api/event/update/:id", [authJwt.verifyToken], controller.updateEvent);
   app.delete("/api/event/delete/:id", [authJwt.verifyToken], controller.deleteEvent);
 };

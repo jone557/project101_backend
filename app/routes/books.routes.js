@@ -19,36 +19,10 @@ module.exports = function (app) {
         return res.status(200).send(url);
       });
   })
-  app.post("/api/add-book", [authJwt.verifyToken], 
-  function (req, res, next) {
-    if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-      singleImageUpload(req, res, function (err, some) {
-        if (err) {
-          return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
-        }
-        req.body.image = req.file.location;
-        next();
-      });
-    } else {
-      next();
-    }
-  },
-   controller.addBook);
+  app.post("/api/add-book", [authJwt.verifyToken], controller.addBook);
   app.get("/api/book/:id", controller.getSingleBook);
   app.get("/api/books", controller.getBookList);
-  app.put("/api/book/update/:id", [authJwt.verifyToken],function (req, res, next) {
-    if (req.headers['content-type']?.startsWith('multipart/form-data')) {
-      singleImageUpload(req, res, function (err, some) {
-        if (err) {
-          return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
-        }
-        req.body.image = req.file.location;
-        next();
-      });
-    } else {
-      next();
-    }
-  }, controller.updateBook);
+  app.put("/api/book/update/:id", [authJwt.verifyToken], controller.updateBook);
   app.delete("/api/book/delete/:id", [authJwt.verifyToken],
   controller.deleteBook);
   
