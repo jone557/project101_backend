@@ -1,7 +1,7 @@
 const controller = require("../controller/books.controller");
 const authJwt = require("../middleware/authJwt");
 const mediaUpload = require("../middleware/media");
-const singleImageUpload = mediaUpload.imageUpload.single('image');
+const formDataMiddleware = require('../middleware/formDataMiddleware'); 
 const singleFileUpload = mediaUpload.documentUpload.single('file');
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -19,10 +19,10 @@ module.exports = function (app) {
         return res.status(200).send(url);
       });
   })
-  app.post("/api/add-book", [authJwt.verifyToken], controller.addBook);
+  app.post("/api/add-book", [authJwt.verifyToken, formDataMiddleware], controller.addBook);
   app.get("/api/book/:id", controller.getSingleBook);
   app.get("/api/books", controller.getBookList);
-  app.put("/api/book/update/:id", [authJwt.verifyToken], controller.updateBook);
+  app.put("/api/book/update/:id", [authJwt.verifyToken, formDataMiddleware], controller.updateBook);
   app.delete("/api/book/delete/:id", [authJwt.verifyToken],
   controller.deleteBook);
   

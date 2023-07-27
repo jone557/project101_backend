@@ -2,6 +2,7 @@ const controller = require("../controller/event.controller");
 const authJwt = require("../middleware/authJwt");
 const mediaUpload = require("../middleware/media");
 const singleImageUpload = mediaUpload.imageUpload.single('image');
+const formDataMiddleware = require('../middleware/formDataMiddleware'); 
 module.exports = function (app) {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
@@ -20,9 +21,9 @@ module.exports = function (app) {
      return res.status(401).send("no Image value detected")
     }
   },)
-  app.post("/api/add-event", [authJwt.verifyToken], controller.addEvent);
+  app.post("/api/add-event", [authJwt.verifyToken, formDataMiddleware], controller.addEvent);
   app.get("/api/event/:id", controller.getSingleEvent);
   app.get("/api/event", controller.getEventList);
-  app.put("/api/event/update/:id", [authJwt.verifyToken], controller.updateEvent);
+  app.put("/api/event/update/:id", [authJwt.verifyToken, formDataMiddleware], controller.updateEvent);
   app.delete("/api/event/delete/:id", [authJwt.verifyToken], controller.deleteEvent);
 };
