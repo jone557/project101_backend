@@ -88,7 +88,7 @@ exports.getSingleBook = (req, res) => {
               return res.status(404).send({ message: "No item found with the given ID" });
             }
             return res.status(200).send({
-                ...notice._doc
+                ...book._doc
             });
         })
   } catch (error) {
