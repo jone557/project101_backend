@@ -2,7 +2,8 @@ const db = require("../models");
 const BaseService = require("../core/base.service");
 const { ObjectId } = require("mongodb");
 const Gallery = db.Gallery;
-
+const mediaUpload = require("../middleware/localStorage");
+const mediaDelete = mediaUpload.deleteFile;
 exports.addgallery = (req, res) => {
     try {
         const images = req.body.images; 
@@ -27,6 +28,17 @@ exports.addgallery = (req, res) => {
 
 exports.deleteGalleryImage = (req, res) => {
     const id = req.params.id;
+    Gallery.findById(id)
+    .exec((err, event) => {
+      if (err) {
+        return res.status(500).send({ message: err });
+      }
+      if (!event) {
+        return res.status(404).send({ message: "No event found with the given ID" });
+      }
+    imgUrl = event?.image
+    filePath = `uploads/${imgUrl}`
+    mediaDelete(filePath);
     Gallery.findByIdAndDelete({
             _id: new ObjectId(id)
         })
@@ -42,6 +54,7 @@ exports.deleteGalleryImage = (req, res) => {
               message:"Image delated successfully!"
             });
         })
+      });
   }
   
 

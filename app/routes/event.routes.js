@@ -1,6 +1,6 @@
 const controller = require("../controller/event.controller");
 const authJwt = require("../middleware/authJwt");
-const mediaUpload = require("../middleware/media");
+const mediaUpload = require("../middleware/localStorage");
 const singleImageUpload = mediaUpload.imageUpload.single('image');
 const formDataMiddleware = require('../middleware/formDataMiddleware'); 
 module.exports = function (app) {
@@ -14,7 +14,7 @@ module.exports = function (app) {
         if (err) {
           return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
         }
-        const url = req.file?.location;
+        const url = req.file?.path.split('uploads/')[1];
         return res.status(200).send(url);
       });
     } else {

@@ -56,6 +56,17 @@ exports.updateBook = (req, res) => {
 
 exports.deleteBook = (req, res) => {
   const id = req.params.id;
+  Book.findById(id)
+    .exec((err, event) => {
+      if (err) {
+        return res.status(500).send({ message: err });
+      }
+      if (!event) {
+        return res.status(404).send({ message: "No event found with the given ID" });
+      }
+    imgUrl = event?.image
+    filePath = `uploads/books/${imgUrl}`
+    mediaDelete(filePath);
   Book.findByIdAndDelete({
           _id: new ObjectId(id)
       })
@@ -71,6 +82,7 @@ exports.deleteBook = (req, res) => {
             message:"book delated successfully!"
           });
       })
+    });
 }
 
 exports.getSingleBook = (req, res) => {

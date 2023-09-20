@@ -1,7 +1,8 @@
 const db = require("../models");
 const { ObjectId } = require("mongodb");
 const Notice = db.Notice;
-
+const mediaUpload = require("../middleware/localStorage");
+const mediaDelete = mediaUpload.deleteFile;
 exports.addNotice = (req, res) => {
   try {
     const notice = new Notice({
@@ -50,6 +51,17 @@ exports.updateNotice = (req, res) => {
 
 exports.deleteNotice = (req, res) => {
   const id = req.params.id;
+  Notice.findById(id)
+  .exec((err, event) => {
+    if (err) {
+      return res.status(500).send({ message: err });
+    }
+    if (!event) {
+      return res.status(404).send({ message: "No event found with the given ID" });
+    }
+  imgUrl = event?.image
+  filePath = `uploads/${imgUrl}`
+  mediaDelete(filePath);
   Notice.findByIdAndDelete({
           _id: new ObjectId(id)
       })
@@ -65,6 +77,7 @@ exports.deleteNotice = (req, res) => {
             message:"notice delated successfully!"
           });
       })
+    });
 }
 
 exports.getSingleNotice = (req, res) => {
