@@ -1,6 +1,6 @@
 const controller = require("../controller/gallery.controller");
 const authJwt = require("../middleware/authJwt");
-const mediaUpload = require("../middleware/media");
+const mediaUpload = require("../middleware/localStorage");
 const multipleImageUpload = mediaUpload.imageUpload.array('images', 5);
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -14,8 +14,8 @@ module.exports = function (app) {
         if (err) {
           return res.status(422).send({ errors: [{ title: 'Image Upload Error', detail: err.message }] });
         }
-        const locations = req.files.map((file) => file.location);
-        req.body.images = locations;
+        const path = req.files.map((file) => file.path.split('uploads/')[1]);
+        req.body.images = path;
         next();
       });
     } else {
