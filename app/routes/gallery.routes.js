@@ -8,7 +8,7 @@ module.exports = function (app) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
   });
-  app.post("/api/add-gallery", [authJwt.verifyToken, upload, ImageUpload ]  , controller.addgallery);
+  app.post("/api/add-gallery", [authJwt.verifyToken, upload, ImageUpload],  controller.addgallery);
   app.get("/api/gallery/:id", controller.getGalleryImage);
   app.get("/api/gallery", controller.getGalleryList);
   app.delete("/api/gallery/delete/:id", [authJwt.verifyToken], controller.deleteGalleryImage);

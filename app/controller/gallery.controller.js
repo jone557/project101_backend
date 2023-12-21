@@ -6,8 +6,7 @@ const mediaUpload = require("../middleware/localStorage");
 const mediaDelete = mediaUpload.deleteFile;
 exports.addgallery = (req, res) => {
     try {
-        const images = req.body.images; 
-
+        const images = req.images; 
         const galleryImages = images.map((imageName) => {
           return new Gallery({ image: imageName });
         });

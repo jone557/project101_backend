@@ -30,7 +30,7 @@ const uploadImage = (req, res) => {
         res.status(500).json({ message: 'Error uploading image' });
       } else {
         // The result object contains information about the uploaded image
-        console.log(result);
+        // console.log(result);
         res.json({ message: 'Image uploaded successfully', imageUrl: result.secure_url });
       }
     }).end(file.buffer);
@@ -40,7 +40,7 @@ const uploadImage = (req, res) => {
   }
 };
 
-const uploadMultipleImage = (req, res) => {
+const uploadMultipleImage = (req, res, next) => {
   try {
     const { files } = req;
 
@@ -58,7 +58,6 @@ const uploadMultipleImage = (req, res) => {
             console.error(error);
             reject(`Error uploading image ${index + 1}`);
           } else {
-            console.log(result);
             resolve(result.secure_url);
           }
         }).end(files[index].buffer);
@@ -67,7 +66,8 @@ const uploadMultipleImage = (req, res) => {
 
     Promise.all(promises)
       .then(imageUrls => {
-        res.json({ message: 'Images uploaded successfully', imageUrls });
+         req.images = imageUrls;
+    next();
       })
       .catch(error => {
         console.error(error);
